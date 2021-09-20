@@ -1,0 +1,68 @@
+import "https://github.com/OpenZeppelin/openzeppelin-contracts/contracts/token/ERC1155/ERC1155.sol";
+
+
+contract marketplace is ERC1155 {
+
+	  address private owner;
+	
+	  uint256 public constant GOLD = 0;
+    
+    uint256 public constant THORS_HAMMER = 1;
+    
+    
+    event NFT(address to,string status,uint256 id );
+    
+	constructor() public ERC1155("uri"){
+    
+	   owner=msg.sender;
+	
+		_mint(msg.sender,GOLD,10000,"");
+	
+		_mint(msg.sender,THORS_HAMMER,1,"");
+
+
+
+	} 
+
+	
+	function buyNFT(address from,address to, uint256 id,uint256 amount) public {
+	
+		require(balanceOf(from,id)>=amount,"Insufficiant balance of seller");
+	
+		
+	
+		super.safeTransferFrom(msg.sender,from,0,10,"");
+		
+        super.safeTransferFrom(from,msg.sender,id,amount,"");
+        
+        emit NFT(msg.sender,"buy",id);
+
+
+		
+	} 
+
+	function transfergold(address payable from,address to ) public payable {
+	    
+	    
+	    
+        
+		super.safeTransferFrom(from,to,0,100,"");
+
+		
+
+	}
+	function sellNFT( address from,address to, uint256 id,uint256 amount) external{
+	    
+	    
+	
+		
+        super.safeTransferFrom(msg.sender,owner,id,amount,"");
+        
+        super.safeTransferFrom(owner,msg.sender,0,10,"");
+		
+		    emit NFT(msg.sender,"sold",id);
+	}
+}
+
+
+
